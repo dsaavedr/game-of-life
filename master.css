@@ -14,3 +14,9 @@ html, body {
     justify-content: center;
     align-items: center;
 }
+
+#buttons {
+    position: absolute;
+    top: 10px;
+    opacity: .7;
+}

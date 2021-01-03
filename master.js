@@ -1,12 +1,12 @@
 let cells = [],
     dirty = false,
-    CELL = 20,
-    cutoff = 0.4,
+    CELL = 10,
+    cutoff = 0.5,
     n = 0,
     int = 100,
     interval = null,
     started = false,
-    BG = "#dff",
+    BG = "#000",
     SIZE,
     WIDTH,
     HEIGHT;
@@ -43,7 +43,7 @@ ctx.fillRect(0, 0, WIDTH, HEIGHT);
 ctx.closePath();
 
 ctx.strokeStyle = "#ddd";
-ctx.fillStyle = "lightblue";
+ctx.fillStyle = "#f0f";
 // ctx.fillStyle = "darkorchid";
 // ctx.fillStyle = "#F0F";
 //ctx.fillStyle = "#444";
