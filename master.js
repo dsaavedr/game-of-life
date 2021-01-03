@@ -1,9 +1,17 @@
-var WIDTH, HEIGHT;
+let cells = [],
+    CELL = 5,
+    cutoff = 0.6,
+    n = 0,
+    int = 50,
+    SIZE,
+    WIDTH,
+    HEIGHT;
 
-var canvas = document.getElementById('canvas'),
-    ctx = canvas.getContext('2d');
+const canvas = document.getElementById("canvas"),
+    ctx = canvas.getContext("2d");
 
-var requestAnimationFrame = window.requestAnimationFrame ||
+const requestAnimationFrame =
+    window.requestAnimationFrame ||
     window.mozRequestAnimationFrame ||
     window.webkitRequestAnimationFrame ||
     window.msRequestAnimationFrame;
@@ -12,22 +20,109 @@ function init() {
     WIDTH = window.innerWidth;
     HEIGHT = window.innerHeight;
 
-    canvas.setAttribute('width', WIDTH);
-    canvas.setAttribute('height', HEIGHT);
+    if (WIDTH > HEIGHT) {
+        n = Math.floor(HEIGHT / CELL);
+        HEIGHT = n * CELL;
+        WIDTH = HEIGHT;
+    } else {
+        n = Math.floor(WIDTH / CELL);
+        WIDTH = n * CELL;
+        HEIGHT = WIDTH;
+    }
+
+    canvas.setAttribute("width", WIDTH);
+    canvas.setAttribute("height", HEIGHT);
 
     ctx.clearRect(0, 0, WIDTH, HEIGHT);
     ctx.beginPath();
-    ctx.fillStyle = 'black';
+    ctx.fillStyle = "black";
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
     ctx.closePath();
 
-    ani();
+    ctx.strokeStyle = "#888";
+    ctx.fillStyle = "#F0F";
+    //ctx.fillStyle = "#444";
+    ctx.font = "10px arial";
+
+    for (let i = 0; i < n; i++) {
+        for (let j = 0; j < n; j++) {
+            cells.push(
+                new Cell(
+                    {
+                        x: j * CELL,
+                        y: i * CELL
+                    },
+                    Math.random() > cutoff
+                )
+            );
+        }
+    }
+
+    setInterval(ani, int);
 }
 
 function ani() {
+    ctx.save();
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, WIDTH, HEIGHT);
+    ctx.restore();
 
+    for (let i = 0; i < cells.length; i++) {
+        let c = cells[i];
+        let count = 0;
+        c.draw();
 
-    //requestAnimationFrame(ani);
+        let x = c.pos.x / CELL;
+        let y = c.pos.y / CELL;
+
+        let t = "";
+
+        // Count live neighbours
+
+        for (let a = -1; a < 2; a++) {
+            for (let b = -1; b < 2; b++) {
+                let xn = x + b;
+                let yn = y + a;
+
+                if (a != 0 || b != 0) {
+                    if (xn > -1 && xn < n) {
+                        if (yn > -1 && yn < n) {
+                            let idx = IX(xn, yn, n);
+                            count += cells[idx].live ? 1 : 0;
+                            t += idx + ",";
+                        }
+                    }
+                }
+            }
+        }
+
+        //ctx.strokeText(t, c.pos.x, c.pos.y + 10);
+        //ctx.strokeText(i, c.pos.x, c.pos.y + 30);
+        //ctx.strokeText(count, c.pos.x, c.pos.y + 50);
+
+        /*
+        Any live cell with two or three live neighbours survives.
+        Any dead cell with three live neighbours becomes a live cell.
+        All other live cells die in the next generation. Similarly, all other dead cells stay dead.
+        */
+        if (c.live) {
+            if (count == 2 || count == 3) {
+                c.breathe();
+            } else {
+                c.die();
+            }
+        } else {
+            if (count == 3) {
+                c.breathe();
+            } else {
+                c.die();
+            }
+        }
+    }
+
+    for (let i = 0; i < cells.length; i++) {
+        cells[i].update();
+    }
 }
 
 init();
