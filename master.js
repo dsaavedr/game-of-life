@@ -3,7 +3,7 @@ let cells = [],
     CELL = 20,
     cutoff = 0.6,
     n = 0,
-    int = 250,
+    int = 100,
     interval = null,
     started = false,
     BG = "#dff",
@@ -121,10 +121,6 @@ function init() {
     }
 
     document.getElementById("stop").addEventListener("click", e => {
-        for (c of cells) {
-            c.live = false;
-            c.draw();
-        }
         started = false;
         dirty = false;
         clearInterval(interval);
@@ -132,6 +128,10 @@ function init() {
         ctx.fillStyle = BG;
         ctx.fillRect(0, 0, WIDTH, HEIGHT);
         ctx.restore();
+        for (c of cells) {
+            c.live = false;
+            c.draw();
+        }
     });
 }
 
