@@ -1,8 +1,12 @@
 let cells = [],
-    CELL = 5,
+    dirty = false,
+    CELL = 20,
     cutoff = 0.6,
     n = 0,
-    int = 50,
+    int = 250,
+    interval = null,
+    started = false,
+    BG = "#dff",
     SIZE,
     WIDTH,
     HEIGHT;
@@ -16,54 +20,124 @@ const requestAnimationFrame =
     window.webkitRequestAnimationFrame ||
     window.msRequestAnimationFrame;
 
-function init() {
-    WIDTH = window.innerWidth;
-    HEIGHT = window.innerHeight;
+WIDTH = window.innerWidth;
+HEIGHT = window.innerHeight;
 
-    if (WIDTH > HEIGHT) {
-        n = Math.floor(HEIGHT / CELL);
-        HEIGHT = n * CELL;
-        WIDTH = HEIGHT;
-    } else {
-        n = Math.floor(WIDTH / CELL);
-        WIDTH = n * CELL;
-        HEIGHT = WIDTH;
+if (WIDTH > HEIGHT) {
+    n = Math.floor(HEIGHT / CELL);
+    HEIGHT = n * CELL;
+    WIDTH = HEIGHT;
+} else {
+    n = Math.floor(WIDTH / CELL);
+    WIDTH = n * CELL;
+    HEIGHT = WIDTH;
+}
+
+canvas.setAttribute("width", WIDTH);
+canvas.setAttribute("height", HEIGHT);
+
+ctx.clearRect(0, 0, WIDTH, HEIGHT);
+ctx.beginPath();
+ctx.fillStyle = BG;
+ctx.fillRect(0, 0, WIDTH, HEIGHT);
+ctx.closePath();
+
+ctx.strokeStyle = "#ddd";
+ctx.fillStyle = "lightblue";
+// ctx.fillStyle = "darkorchid";
+// ctx.fillStyle = "#F0F";
+//ctx.fillStyle = "#444";
+ctx.font = "10px arial";
+
+// Populate canvas with dead cells
+
+for (let i = 0; i < n; i++) {
+    for (let j = 0; j < n; j++) {
+        cells.push(
+            new Cell(
+                {
+                    x: j * CELL,
+                    y: i * CELL
+                },
+                false
+            )
+        );
+        cells[cells.length - 1].draw();
     }
+}
 
-    canvas.setAttribute("width", WIDTH);
-    canvas.setAttribute("height", HEIGHT);
+canvas.addEventListener("click", e => {
+    if (!started) {
+        dirty = true;
+        // Top corner of cell
+        let x = floor(e.layerX / CELL) * CELL;
+        let y = floor(e.layerY / CELL) * CELL;
 
-    ctx.clearRect(0, 0, WIDTH, HEIGHT);
-    ctx.beginPath();
-    ctx.fillStyle = "black";
-    ctx.fillRect(0, 0, WIDTH, HEIGHT);
-    ctx.closePath();
+        // Set cell to live
 
-    ctx.strokeStyle = "#888";
-    ctx.fillStyle = "#F0F";
-    //ctx.fillStyle = "#444";
-    ctx.font = "10px arial";
+        for (let i = 0; i < cells.length; i++) {
+            let c = cells[i];
+            if (c.pos.x == x && c.pos.y == y) {
+                c.live = !c.live;
+                break;
+            }
+        }
 
-    for (let i = 0; i < n; i++) {
-        for (let j = 0; j < n; j++) {
-            cells.push(
-                new Cell(
-                    {
-                        x: j * CELL,
-                        y: i * CELL
-                    },
-                    Math.random() > cutoff
-                )
-            );
+        ctx.save();
+        ctx.fillStyle = BG;
+        ctx.fillRect(0, 0, WIDTH, HEIGHT);
+        ctx.restore();
+        gun = [];
+        for (let i = 0; i < cells.length; i++) {
+            cells[i].draw();
+        }
+    }
+});
+
+document.getElementById("start").addEventListener("click", e => {
+    if (started) {
+        if (interval) {
+            clearInterval(interval);
+            interval = null;
+        } else {
+            interval = setInterval(ani, int);
+        }
+    } else {
+        started = true;
+        init();
+        interval = setInterval(ani, int);
+    }
+});
+
+function init() {
+    if (!dirty) {
+        for (let i = 0; i < cells.length; i++) {
+            if (random() < cutoff) {
+                cells[i].live = false;
+            } else {
+                cells[i].live = true;
+            }
         }
     }
 
-    setInterval(ani, int);
+    document.getElementById("stop").addEventListener("click", e => {
+        for (c of cells) {
+            c.live = false;
+            c.draw();
+        }
+        started = false;
+        dirty = false;
+        clearInterval(interval);
+        ctx.save();
+        ctx.fillStyle = BG;
+        ctx.fillRect(0, 0, WIDTH, HEIGHT);
+        ctx.restore();
+    });
 }
 
 function ani() {
     ctx.save();
-    ctx.fillStyle = "black";
+    ctx.fillStyle = BG;
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
     ctx.restore();
 
@@ -124,5 +198,3 @@ function ani() {
         cells[i].update();
     }
 }
-
-init();

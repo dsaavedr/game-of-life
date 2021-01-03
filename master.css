@@ -10,6 +10,7 @@ html, body {
     min-height: 100vh;
     background: lightgray;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
 }
