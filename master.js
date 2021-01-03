@@ -1,7 +1,7 @@
 let cells = [],
     dirty = false,
     CELL = 20,
-    cutoff = 0.6,
+    cutoff = 0.4,
     n = 0,
     int = 100,
     interval = null,
@@ -144,7 +144,7 @@ function ani() {
     for (let i = 0; i < cells.length; i++) {
         let c = cells[i];
         let count = 0;
-        c.draw();
+        c.draw(false);
 
         let x = c.pos.x / CELL;
         let y = c.pos.y / CELL;
