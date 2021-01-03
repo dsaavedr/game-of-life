@@ -1,0 +1,3 @@
+[submodule "js-utilities"]
+	path = js-utilities
+	url = https://github.com/dsaavedr/js-utilities
