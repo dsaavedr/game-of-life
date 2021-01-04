@@ -1,6 +1,6 @@
 let cells = [],
     dirty = false,
-    CELL = 10,
+    CELL = 20,
     cutoff = 0.5,
     n = 0,
     int = 100,
@@ -10,6 +10,10 @@ let cells = [],
     SIZE,
     WIDTH,
     HEIGHT;
+
+let sizeSlider, speedSlider;
+
+addChecks();
 
 const canvas = document.getElementById("canvas"),
     ctx = canvas.getContext("2d");
@@ -43,6 +47,7 @@ ctx.fillRect(0, 0, WIDTH, HEIGHT);
 ctx.closePath();
 
 ctx.strokeStyle = "#ddd";
+ctx.lineWidth = 0.8;
 ctx.fillStyle = "#f0f";
 // ctx.fillStyle = "darkorchid";
 // ctx.fillStyle = "#F0F";
@@ -197,4 +202,44 @@ function ani() {
     for (let i = 0; i < cells.length; i++) {
         cells[i].update();
     }
+}
+
+function openNav() {
+    var inputs = document.getElementById("inputs");
+    inputs.style.width = "250px";
+    inputs.style.paddingLeft = "25px";
+    document.getElementById("openBtn").style.opacity = 0;
+}
+
+function closeNav() {
+    var inputs = document.getElementById("inputs");
+    inputs.style.width = "0";
+    inputs.style.paddingLeft = "0";
+    document.getElementById("openBtn").style.opacity = 1;
+}
+
+function addChecks() {
+    sizeSlider = document.getElementById("size");
+    sizeSlider.value = CELL;
+    speedSlider = document.getElementById("speed");
+    speedSlider.value = 1000 - int;
+
+    speedSlider.addEventListener("change", () => {
+        int = 1000 - speedSlider.value;
+        if (started) {
+            log(int);
+            clearInterval(interval);
+            interval = setInterval(ani, int);
+        }
+    });
+
+    sizeSlider.addEventListener("change", () => {
+        /* if (!started) {
+            const { value } = sizeSlider;
+
+            if (value < CELL) {
+                
+            }
+        } */
+    });
 }

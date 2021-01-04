@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
@@ -18,5 +19,60 @@ html, body {
 #buttons {
     position: absolute;
     top: 10px;
-    opacity: .7;
+    opacity: 0.7;
+}
+
+.sidebar {
+    /* padding-left: 25px; */
+    height: 100vh;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background: #222d;
+    overflow-x: hidden;
+    padding-top: 40px;
+    transition: 0.5s;
+    color: gray;
+}
+
+label {
+    display: block;
+}
+
+.closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+}
+
+.closebtn:hover {
+    text-decoration: none;
+}
+
+.openbtn {
+    position: absolute;
+    top: 25px;
+    left: 25px;
+    font-size: 20px;
+    cursor: pointer;
+    background: transparent;
+    color: white;
+    text-shadow: 0 0 2px black;
+    padding: 10px 15px;
+    border: none;
+    transition: 0.5s;
+}
+
+.form-check,
+.form-group {
+    margin-top: 20px;
+}
+
+.form-check:hover,
+.form-group:hover {
+    color: white;
 }
