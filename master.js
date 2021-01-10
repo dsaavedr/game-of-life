@@ -4,6 +4,7 @@ let cells = [],
     cutoff = 0.5,
     n = 0,
     int = 100,
+    last = -1,
     interval = null,
     started = false,
     BG = "#000",
@@ -71,6 +72,46 @@ for (let i = 0; i < n; i++) {
     }
 }
 
+let mouseDownID = null;
+
+canvas.addEventListener("mousedown", e => {
+    if (!started) {
+        dirty = true;
+
+        document.onmousemove = whilemousedown;
+    }
+});
+
+const whilemousedown = e => {
+    if (e.path[0].id == "canvas") {
+        let x = floor(e.layerX / CELL) * CELL;
+        let y = floor(e.layerY / CELL) * CELL;
+        for (let i = 0; i < cells.length; i++) {
+            let c = cells[i];
+            if (c.pos.x == x && c.pos.y == y) {
+                // if (last != i) {
+                //     c.live = !c.live;
+                // }
+                c.live = true;
+                last = i;
+                break;
+            }
+        }
+        ctx.save();
+        ctx.fillStyle = BG;
+        ctx.fillRect(0, 0, WIDTH, HEIGHT);
+        ctx.restore();
+        gun = [];
+        for (let i = 0; i < cells.length; i++) {
+            cells[i].draw();
+        }
+    }
+};
+
+canvas.addEventListener("mouseup", e => {
+    document.onmousemove = null;
+});
+
 canvas.addEventListener("click", e => {
     if (!started) {
         dirty = true;
@@ -83,7 +124,9 @@ canvas.addEventListener("click", e => {
         for (let i = 0; i < cells.length; i++) {
             let c = cells[i];
             if (c.pos.x == x && c.pos.y == y) {
-                c.live = !c.live;
+                if (last != i) {
+                    c.live = !c.live;
+                }
                 break;
             }
         }
@@ -96,6 +139,7 @@ canvas.addEventListener("click", e => {
         for (let i = 0; i < cells.length; i++) {
             cells[i].draw();
         }
+        last = -1;
     }
 });
 
